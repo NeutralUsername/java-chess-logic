@@ -117,6 +117,31 @@ public class Chess {
         }
     }
 
+    public String getBoardString() {
+        String boardString = "";
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                Piece piece = board[i][j].getPiece();
+                if (piece == null) {
+                    boardString += "-";
+                } else if (piece instanceof Pawn) {
+                    boardString += piece.isWhite() ? "P" : "p";
+                } else if (piece instanceof Rook) {
+                    boardString += piece.isWhite() ? "R" : "r";
+                } else if (piece instanceof Knight) {
+                    boardString += piece.isWhite() ? "N" : "n";
+                } else if (piece instanceof Bishop) {
+                    boardString += piece.isWhite() ? "B" : "b";
+                } else if (piece instanceof Queen) {
+                    boardString += piece.isWhite() ? "Q" : "q";
+                } else if (piece instanceof King) {
+                    boardString += piece.isWhite() ? "K" : "k";
+                }
+            }
+        }
+        return boardString;
+    }
+
     public String generateAlgebraicNotation(int fromRow, int fromColumn, int toRow, int toColumn) {
         String notation = "";
         Piece movingPiece = board[fromRow][fromColumn].getPiece();
