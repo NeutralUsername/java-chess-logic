@@ -188,23 +188,18 @@ public class Chess {
         if (attackedPiece.isWhite() == attackingPiece.isWhite()) {
             return false;
         }
-        if (attackingPiece instanceof Pawn && isValidPawnMovement(fromRow, fromColumn, toRow, toColumn)) {
-            return true;
-        }
-        if (attackingPiece instanceof Rook && isValidRookMovement(fromRow, fromColumn, toRow, toColumn)) {
-            return true;
-        }
-        if (attackingPiece instanceof Knight && isValidKnightMovement(fromRow, fromColumn, toRow, toColumn)) {
-            return true;
-        }
-        if (attackingPiece instanceof Bishop && isValidBishopMovement(fromRow, fromColumn, toRow, toColumn)) {
-            return true;
-        }
-        if (attackingPiece instanceof Queen && isValidQueenMovement(fromRow, fromColumn, toRow, toColumn)) {
-            return true;
-        }
-        if (attackingPiece instanceof King && isValidKingMovement(fromRow, fromColumn, toRow, toColumn)) {
-            return true;
+        if (attackingPiece instanceof Pawn) {
+            return isValidPawnMovement(fromRow, fromColumn, toRow, toColumn);
+        } else if (attackingPiece instanceof Rook) {
+            return isValidRookMovement(fromRow, fromColumn, toRow, toColumn);
+        } else if (attackingPiece instanceof Knight) {
+            return isValidKnightMovement(fromRow, fromColumn, toRow, toColumn);
+        } else if (attackingPiece instanceof Bishop) {
+            return isValidBishopMovement(fromRow, fromColumn, toRow, toColumn);
+        } else if (attackingPiece instanceof Queen) {
+            return isValidQueenMovement(fromRow, fromColumn, toRow, toColumn);
+        } else if (attackingPiece instanceof King) {
+            return isValidKingMovement(fromRow, fromColumn, toRow, toColumn);
         }
         return false;
     }
@@ -221,24 +216,31 @@ public class Chess {
         if (piece.isWhite() != isWhiteTurn()) {
             return false;
         }
-        if (piece instanceof Pawn && !isValidPawnMovement(fromRow, fromColumn, toRow, toColumn)) {
-            return false;
-        }
-        if (piece instanceof Rook && !isValidRookMovement(fromRow, fromColumn, toRow, toColumn)) {
-            return false;
-        }
-        if (piece instanceof Knight && !isValidKnightMovement(fromRow, fromColumn, toRow, toColumn)) {
-            return false;
-        }
-        if (piece instanceof Bishop && !isValidBishopMovement(fromRow, fromColumn, toRow, toColumn)) {
-            return false;
-        }
-        if (piece instanceof Queen && !isValidQueenMovement(fromRow, fromColumn, toRow, toColumn)) {
-            return false;
-        }
-        if (piece instanceof King && !isValidKingMovement(fromRow, fromColumn, toRow, toColumn)
-                && !isValidCastling(fromRow, fromColumn, toRow, toColumn)) {
-            return false;
+        if (piece instanceof Pawn) {
+            if (!isValidPawnMovement(fromRow, fromColumn, toRow, toColumn)  ) {
+                return false;
+            }
+        } else if (piece instanceof Rook) {
+            if (!isValidRookMovement(fromRow, fromColumn, toRow, toColumn)) {
+                return false;
+            }
+        } else if (piece instanceof Knight) {
+            if (!isValidKnightMovement(fromRow, fromColumn, toRow, toColumn)) {
+                return false;
+            }
+        } else if (piece instanceof Bishop) {
+            if (!isValidBishopMovement(fromRow, fromColumn, toRow, toColumn)) {
+                return false;
+            }
+        } else if (piece instanceof Queen) {
+            if (!isValidQueenMovement(fromRow, fromColumn, toRow, toColumn)) {
+                return false;
+            }
+        } else if (piece instanceof King) {
+            if (!isValidKingMovement(fromRow, fromColumn, toRow, toColumn)
+                    && !isValidCastling(fromRow, fromColumn, toRow, toColumn)) {
+                return false;
+            }
         }
 
         Piece toPiece = board[toRow][toColumn].getPiece();
@@ -541,5 +543,4 @@ public class Chess {
         }
         return false;
     }
-
 }
