@@ -203,39 +203,8 @@ public class Chess {
         if (attackingPiece instanceof Queen && isValidQueenMovement(fromRow, fromColumn, toRow, toColumn)) {
             return true;
         }
-        if (attackingPiece instanceof King) {
-            if (fromRow == toRow + 1 && fromColumn == toColumn && (board[toRow][toColumn].getPiece() == null
-                    || board[toRow][toColumn].getPiece().isWhite() != attackingPiece.isWhite())) {
-                return true;
-            }
-            if (fromRow == toRow + 1 && fromColumn == toColumn + 1 && (board[toRow][toColumn].getPiece() == null
-                    || board[toRow][toColumn].getPiece().isWhite() != attackingPiece.isWhite())) {
-                return true;
-            }
-            if (fromRow == toRow + 1 && fromColumn == toColumn - 1 && (board[toRow][toColumn].getPiece() == null
-                    || board[toRow][toColumn].getPiece().isWhite() != attackingPiece.isWhite())) {
-                return true;
-            }
-            if (fromRow == toRow && fromColumn == toColumn + 1 && (board[toRow][toColumn].getPiece() == null
-                    || board[toRow][toColumn].getPiece().isWhite() != attackingPiece.isWhite())) {
-                return true;
-            }
-            if (fromRow == toRow && fromColumn == toColumn - 1 && (board[toRow][toColumn].getPiece() == null
-                    || board[toRow][toColumn].getPiece().isWhite() != attackingPiece.isWhite())) {
-                return true;
-            }
-            if (fromRow == toRow - 1 && fromColumn == toColumn && (board[toRow][toColumn].getPiece() == null
-                    || board[toRow][toColumn].getPiece().isWhite() != attackingPiece.isWhite())) {
-                return true;
-            }
-            if (fromRow == toRow - 1 && fromColumn == toColumn + 1 && (board[toRow][toColumn].getPiece() == null
-                    || board[toRow][toColumn].getPiece().isWhite() != attackingPiece.isWhite())) {
-                return true;
-            }
-            if (fromRow == toRow - 1 && fromColumn == toColumn - 1 && (board[toRow][toColumn].getPiece() == null
-                    || board[toRow][toColumn].getPiece().isWhite() != attackingPiece.isWhite())) {
-                return true;
-            }
+        if (attackingPiece instanceof King && isValidKingMovement(fromRow, fromColumn, toRow, toColumn)) {
+            return true;
         }
         return false;
     }
@@ -267,7 +236,8 @@ public class Chess {
         if (piece instanceof Queen && !isValidQueenMovement(fromRow, fromColumn, toRow, toColumn)) {
             return false;
         }
-        if (piece instanceof King && !isValidKingMovement(fromRow, fromColumn, toRow, toColumn)) {
+        if (piece instanceof King && !isValidKingMovement(fromRow, fromColumn, toRow, toColumn)
+                && !isValidCastling(fromRow, fromColumn, toRow, toColumn)) {
             return false;
         }
 
@@ -475,16 +445,48 @@ public class Chess {
     }
 
     private boolean isValidQueenMovement(int fromRow, int fromColumn, int toRow, int toColumn) {
-        if (isValidRookMovement(fromRow, fromColumn, toRow, toColumn)) {
+        return isValidRookMovement(fromRow, fromColumn, toRow, toColumn)
+                || isValidBishopMovement(fromRow, fromColumn, toRow, toColumn);
+    }
+
+    private boolean isValidKingMovement(int fromRow, int fromColumn, int toRow, int toColumn) {
+        Piece piece = board[fromRow][fromColumn].getPiece();
+        if (fromRow == toRow + 1 && fromColumn == toColumn && (board[toRow][toColumn].getPiece() == null
+                || board[toRow][toColumn].getPiece().isWhite() != piece.isWhite())) {
             return true;
         }
-        if (isValidBishopMovement(fromRow, fromColumn, toRow, toColumn)) {
+        if (fromRow == toRow + 1 && fromColumn == toColumn + 1 && (board[toRow][toColumn].getPiece() == null
+                || board[toRow][toColumn].getPiece().isWhite() != piece.isWhite())) {
+            return true;
+        }
+        if (fromRow == toRow + 1 && fromColumn == toColumn - 1 && (board[toRow][toColumn].getPiece() == null
+                || board[toRow][toColumn].getPiece().isWhite() != piece.isWhite())) {
+            return true;
+        }
+        if (fromRow == toRow && fromColumn == toColumn + 1 && (board[toRow][toColumn].getPiece() == null
+                || board[toRow][toColumn].getPiece().isWhite() != piece.isWhite())) {
+            return true;
+        }
+        if (fromRow == toRow && fromColumn == toColumn - 1 && (board[toRow][toColumn].getPiece() == null
+                || board[toRow][toColumn].getPiece().isWhite() != piece.isWhite())) {
+            return true;
+        }
+        if (fromRow == toRow - 1 && fromColumn == toColumn && (board[toRow][toColumn].getPiece() == null
+                || board[toRow][toColumn].getPiece().isWhite() != piece.isWhite())) {
+            return true;
+        }
+        if (fromRow == toRow - 1 && fromColumn == toColumn + 1 && (board[toRow][toColumn].getPiece() == null
+                || board[toRow][toColumn].getPiece().isWhite() != piece.isWhite())) {
+            return true;
+        }
+        if (fromRow == toRow - 1 && fromColumn == toColumn - 1 && (board[toRow][toColumn].getPiece() == null
+                || board[toRow][toColumn].getPiece().isWhite() != piece.isWhite())) {
             return true;
         }
         return false;
     }
 
-    private boolean isValidKingMovement(int fromRow, int fromColumn, int toRow, int toColumn) {
+    private boolean isValidCastling(int fromRow, int fromColumn, int toRow, int toColumn) {
         King king = (King) board[fromRow][fromColumn].getPiece();
         if (!king.hasMoved() && !isUnderAttack(fromRow, fromColumn)) {
             if (king.isWhite()) {
@@ -537,38 +539,7 @@ public class Chess {
                 }
             }
         }
-        if (fromRow == toRow + 1 && fromColumn == toColumn && (board[toRow][toColumn].getPiece() == null
-                || board[toRow][toColumn].getPiece().isWhite() != king.isWhite())) {
-            return true;
-        }
-        if (fromRow == toRow + 1 && fromColumn == toColumn + 1 && (board[toRow][toColumn].getPiece() == null
-                || board[toRow][toColumn].getPiece().isWhite() != king.isWhite())) {
-            return true;
-        }
-        if (fromRow == toRow + 1 && fromColumn == toColumn - 1 && (board[toRow][toColumn].getPiece() == null
-                || board[toRow][toColumn].getPiece().isWhite() != king.isWhite())) {
-            return true;
-        }
-        if (fromRow == toRow && fromColumn == toColumn + 1 && (board[toRow][toColumn].getPiece() == null
-                || board[toRow][toColumn].getPiece().isWhite() != king.isWhite())) {
-            return true;
-        }
-        if (fromRow == toRow && fromColumn == toColumn - 1 && (board[toRow][toColumn].getPiece() == null
-                || board[toRow][toColumn].getPiece().isWhite() != king.isWhite())) {
-            return true;
-        }
-        if (fromRow == toRow - 1 && fromColumn == toColumn && (board[toRow][toColumn].getPiece() == null
-                || board[toRow][toColumn].getPiece().isWhite() != king.isWhite())) {
-            return true;
-        }
-        if (fromRow == toRow - 1 && fromColumn == toColumn + 1 && (board[toRow][toColumn].getPiece() == null
-                || board[toRow][toColumn].getPiece().isWhite() != king.isWhite())) {
-            return true;
-        }
-        if (fromRow == toRow - 1 && fromColumn == toColumn - 1 && (board[toRow][toColumn].getPiece() == null
-                || board[toRow][toColumn].getPiece().isWhite() != king.isWhite())) {
-            return true;
-        }
         return false;
     }
+
 }
