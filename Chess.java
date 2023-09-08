@@ -119,6 +119,11 @@ public class Chess {
 
     public String getBoardString() {
         String boardString = "";
+        if (isWhiteTurn()) {
+            boardString += "w";
+        } else {
+            boardString += "b";
+        }
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 Piece piece = board[i][j].getPiece();
