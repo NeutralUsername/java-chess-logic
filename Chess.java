@@ -167,10 +167,10 @@ public class Chess {
         return moves.size() % 2 == 0;
     }
 
-    public boolean isUnderAttack(int row, int column) {
+    public boolean isUnderAttack(int row, int column, boolean asWhite) {
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                if (isThreatening(i, j, row, column)) {
+                if (isThreatening(i, j, row, column, asWhite)) {
                     return true;
                 }
 
@@ -179,13 +179,9 @@ public class Chess {
         return false;
     }
 
-    public boolean isThreatening(int fromRow, int fromColumn, int toRow, int toColumn) {
-        Piece attackedPiece = board[toRow][toColumn].getPiece();
+    public boolean isThreatening(int fromRow, int fromColumn, int toRow, int toColumn, boolean asWhite) {
         Piece attackingPiece = board[fromRow][fromColumn].getPiece();
-        if (attackedPiece == null || attackingPiece == null) {
-            return false;
-        }
-        if (attackedPiece.isWhite() == attackingPiece.isWhite()) {
+        if (attackingPiece == null || attackingPiece.isWhite() == asWhite) {
             return false;
         }
         if (attackingPiece instanceof Pawn) {
@@ -217,7 +213,7 @@ public class Chess {
             return false;
         }
         if (piece instanceof Pawn) {
-            if (!isValidPawnMovement(fromRow, fromColumn, toRow, toColumn)  ) {
+            if (!isValidPawnMovement(fromRow, fromColumn, toRow, toColumn)) {
                 return false;
             }
         } else if (piece instanceof Rook) {
@@ -248,7 +244,7 @@ public class Chess {
         board[fromRow][fromColumn].setPiece(null);
 
         Field kingField = getKingField(piece.isWhite());
-        boolean kingUnderAttack = isUnderAttack(kingField.getRow(), kingField.getColumn());
+        boolean kingUnderAttack = isUnderAttack(kingField.getRow(), kingField.getColumn(), piece.isWhite());
 
         board[fromRow][fromColumn].setPiece(piece);
         board[toRow][toColumn].setPiece(toPiece);
@@ -490,7 +486,7 @@ public class Chess {
 
     private boolean isValidCastling(int fromRow, int fromColumn, int toRow, int toColumn) {
         King king = (King) board[fromRow][fromColumn].getPiece();
-        if (!king.hasMoved() && !isUnderAttack(fromRow, fromColumn)) {
+        if (!king.hasMoved() && !isUnderAttack(fromRow, fromColumn, king.isWhite())) {
             if (king.isWhite()) {
                 if (fromRow == 0 && fromColumn == 4 && toRow == 0 && toColumn == 6
                         && board[0][5].getPiece() == null
@@ -498,9 +494,9 @@ public class Chess {
                         && board[0][7].getPiece().isWhite()
                         && board[0][7].getPiece() instanceof Rook
                         && !((Rook) board[0][7].getPiece()).hasMoved()
-                        && !isUnderAttack(0, 5)
-                        && !isUnderAttack(0, 6)
-                        && !isUnderAttack(0, 7)) {
+                        && !isUnderAttack(0, 5, true)
+                        && !isUnderAttack(0, 6, true)
+                        && !isUnderAttack(0, 7, true)) {
                     return true;
                 }
                 if (fromRow == 0 && fromColumn == 4 && toRow == 0 && toColumn == 2
@@ -510,9 +506,9 @@ public class Chess {
                         && board[0][0].getPiece().isWhite()
                         && board[0][0].getPiece() instanceof Rook
                         && !((Rook) board[0][0].getPiece()).hasMoved()
-                        && !isUnderAttack(0, 0)
-                        && !isUnderAttack(0, 2)
-                        && !isUnderAttack(0, 3)) {
+                        && !isUnderAttack(0, 0, true)
+                        && !isUnderAttack(0, 2, true)
+                        && !isUnderAttack(0, 3, true)) {
                     return true;
                 }
             } else {
@@ -522,9 +518,9 @@ public class Chess {
                         && !board[7][7].getPiece().isWhite()
                         && board[7][7].getPiece() instanceof Rook
                         && !((Rook) board[7][7].getPiece()).hasMoved()
-                        && !isUnderAttack(7, 5)
-                        && !isUnderAttack(7, 6)
-                        && !isUnderAttack(7, 7)) {
+                        && !isUnderAttack(7, 5, false)
+                        && !isUnderAttack(7, 6, false)
+                        && !isUnderAttack(7, 7, false)) {
                     return true;
                 }
                 if (fromRow == 7 && fromColumn == 4 && toRow == 7 && toColumn == 2
@@ -534,9 +530,9 @@ public class Chess {
                         && !board[7][0].getPiece().isWhite()
                         && board[7][0].getPiece() instanceof Rook
                         && !((Rook) board[7][0].getPiece()).hasMoved()
-                        && !isUnderAttack(7, 0)
-                        && !isUnderAttack(7, 2)
-                        && !isUnderAttack(7, 3)) {
+                        && !isUnderAttack(7, 0, false)
+                        && !isUnderAttack(7, 2, false)
+                        && !isUnderAttack(7, 3, false)) {
                     return true;
                 }
             }
