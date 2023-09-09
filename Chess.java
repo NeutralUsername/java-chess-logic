@@ -180,9 +180,12 @@ public class Chess {
                 return true;
             }
             if (fromRow + 1 == toRow && (fromColumn == toColumn + 1 || fromColumn == toColumn - 1)
-                    && ((targetLocationPiece != null && !targetLocationPiece.isWhite())
-                            || (moves.size() > 0
-                                    && moves.get(moves.size() - 1).equals(getColumnLetter(toColumn) + 5)))) {
+                    && ((targetLocationPiece != null && !targetLocationPiece.isWhite()))) {
+                return true;
+            }
+            if (fromRow == 4 && (fromColumn == toColumn + 1 || fromColumn == toColumn - 1)
+                    && (moves.size() > 0
+                            && moves.get(moves.size() - 1).equals(getColumnLetter(toColumn) + 5))) {
                 return true;
             }
         } else {
@@ -194,9 +197,12 @@ public class Chess {
                 return true;
             }
             if (fromRow - 1 == toRow && (fromColumn == toColumn + 1 || fromColumn == toColumn - 1)
-                    && ((targetLocationPiece != null && targetLocationPiece.isWhite())
-                            || (moves.size() > 0
-                                    && moves.get(moves.size() - 1).equals(getColumnLetter(toColumn) + (4))))) {
+                    && ((targetLocationPiece != null && targetLocationPiece.isWhite()))) {
+                return true;
+            }
+            if (fromRow == 3 && (fromColumn == toColumn + 1 || fromColumn == toColumn - 1)
+                    && (moves.size() > 0
+                            && moves.get(moves.size() - 1).equals(getColumnLetter(toColumn) + 4))) {
                 return true;
             }
         }
