@@ -46,39 +46,6 @@ public class Chess {
         }
     }
 
-    public String getLastMove() {
-        if (moves.size() == 0) {
-            return "";
-        }
-        return moves.get(moves.size() - 1);
-    }
-
-    public void printBoard() {
-        System.out.println("  a b c d e f g h");
-        for (int i = 7; i >= 0; i--) {
-            System.out.print((i + 1) + " ");
-            for (int j = 0; j < 8; j++) {
-                if (board[i][j].getPiece() == null) {
-                    System.out.print("  ");
-                } else if (board[i][j].getPiece() instanceof Pawn) {
-                    System.out.print((board[i][j].getPiece().isWhite() ? "P" : "p") + " ");
-                } else if (board[i][j].getPiece() instanceof Rook) {
-                    System.out.print((board[i][j].getPiece().isWhite() ? "R" : "r") + " ");
-                } else if (board[i][j].getPiece() instanceof Knight) {
-                    System.out.print((board[i][j].getPiece().isWhite() ? "N" : "n") + " ");
-                } else if (board[i][j].getPiece() instanceof Bishop) {
-                    System.out.print((board[i][j].getPiece().isWhite() ? "B" : "b") + " ");
-                } else if (board[i][j].getPiece() instanceof Queen) {
-                    System.out.print((board[i][j].getPiece().isWhite() ? "Q" : "q") + " ");
-                } else if (board[i][j].getPiece() instanceof King) {
-                    System.out.print((board[i][j].getPiece().isWhite() ? "K" : "k") + " ");
-                }
-            }
-            System.out.println(i + 1);
-        }
-        System.out.println("  a b c d e f g h");
-    }
-
     public void move(int fromRow, int fromColumn, int toRow, int toColumn) {
         if (isValidAction(fromRow, fromColumn, toRow, toColumn)) {
             String notation = generateAlgebraicNotation(fromRow, fromColumn, toRow, toColumn);
@@ -117,90 +84,10 @@ public class Chess {
         }
     }
 
-    public String getBoardString() {
-        String boardString = "";
-        if (isWhiteTurn()) {
-            boardString += "w";
-        } else {
-            boardString += "b";
-        }
+    public boolean fieldIsThreatened(int row, int column, boolean asWhite) {
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                Piece piece = board[i][j].getPiece();
-                if (piece == null) {
-                    boardString += "-";
-                } else if (piece instanceof Pawn) {
-                    boardString += piece.isWhite() ? "P" : "p";
-                } else if (piece instanceof Rook) {
-                    boardString += piece.isWhite() ? "R" : "r";
-                } else if (piece instanceof Knight) {
-                    boardString += piece.isWhite() ? "N" : "n";
-                } else if (piece instanceof Bishop) {
-                    boardString += piece.isWhite() ? "B" : "b";
-                } else if (piece instanceof Queen) {
-                    boardString += piece.isWhite() ? "Q" : "q";
-                } else if (piece instanceof King) {
-                    boardString += piece.isWhite() ? "K" : "k";
-                }
-            }
-        }
-        return boardString;
-    }
-
-    public String generateAlgebraicNotation(int fromRow, int fromColumn, int toRow, int toColumn) {
-        String notation = "";
-        Piece movingPiece = board[fromRow][fromColumn].getPiece();
-
-        if (movingPiece instanceof King && Math.abs(fromColumn - toColumn) == 2) {
-            if (toColumn == 6) {
-                notation = "O-O";
-            } else {
-                notation = "O-O-O";
-            }
-            return notation;
-        } else if (movingPiece instanceof Pawn) {
-            if (fromColumn != toColumn && board[toRow][toColumn].getPiece() == null) {
-                notation = getColumnLetter(fromColumn) + "x" + getColumnLetter(toColumn) + (toRow + 1);
-            } else {
-                notation = getColumnLetter(toColumn) + (toRow + 1);
-            }
-            if (toRow == 0 || toRow == 7) {
-                notation += "=Q";
-            }
-            return notation;
-        }
-
-        if (board[toRow][toColumn].getPiece() != null) {
-            notation += movingPiece instanceof Rook ? "R"
-                    : movingPiece instanceof Knight ? "N"
-                            : movingPiece instanceof Bishop ? "B" : movingPiece instanceof Queen ? "Q" : "K";
-            if (fromColumn == toColumn) {
-                notation += getColumnLetter(fromColumn);
-            } else {
-                notation += getColumnLetter(fromColumn) + "x";
-            }
-        } else {
-            notation += movingPiece instanceof Rook ? "R"
-                    : movingPiece instanceof Knight ? "N"
-                            : movingPiece instanceof Bishop ? "B" : movingPiece instanceof Queen ? "Q" : "K";
-            if (fromColumn == toColumn) {
-                notation += getColumnLetter(fromColumn);
-            } else {
-                notation += getColumnLetter(fromColumn) + "x";
-            }
-        }
-        notation += getColumnLetter(toColumn) + (toRow + 1);
-        return notation;
-    }
-
-    public boolean isWhiteTurn() {
-        return moves.size() % 2 == 0;
-    }
-
-    public boolean isUnderAttack(int row, int column, boolean asWhite) {
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                if (isThreatening(i, j, row, column, asWhite)) {
+                if (isThreateningField(i, j, row, column, asWhite)) {
                     return true;
                 }
 
@@ -209,7 +96,7 @@ public class Chess {
         return false;
     }
 
-    public boolean isThreatening(int fromRow, int fromColumn, int toRow, int toColumn, boolean asWhite) {
+    public boolean isThreateningField(int fromRow, int fromColumn, int toRow, int toColumn, boolean asWhite) {
         Piece attackingPiece = board[fromRow][fromColumn].getPiece();
         if (attackingPiece == null || attackingPiece.isWhite() == asWhite) {
             return false;
@@ -274,43 +161,12 @@ public class Chess {
         board[fromRow][fromColumn].setPiece(null);
 
         Field kingField = getKingField(piece.isWhite());
-        boolean kingUnderAttack = isUnderAttack(kingField.getRow(), kingField.getColumn(), piece.isWhite());
+        boolean kingUnderAttack = fieldIsThreatened(kingField.getRow(), kingField.getColumn(), piece.isWhite());
 
         board[fromRow][fromColumn].setPiece(piece);
         board[toRow][toColumn].setPiece(toPiece);
 
         return !kingUnderAttack;
-    }
-
-    private Field getKingField(boolean forWhite) {
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                if (board[i][j].getPiece() instanceof King && board[i][j].getPiece().isWhite() == forWhite) {
-                    return board[i][j];
-                }
-            }
-        }
-        return null;
-    }
-
-    private String getColumnLetter(int column) {
-        switch (column) {
-            case 0:
-                return "a";
-            case 1:
-                return "b";
-            case 2:
-                return "c";
-            case 3:
-                return "d";
-            case 4:
-                return "e";
-            case 5:
-                return "f";
-            case 6:
-                return "g";
-        }
-        return "h";
     }
 
     private boolean isValidPawnMovement(int fromRow, int fromColumn, int toRow, int toColumn) {
@@ -516,7 +372,7 @@ public class Chess {
 
     private boolean isValidCastling(int fromRow, int fromColumn, int toRow, int toColumn) {
         King king = (King) board[fromRow][fromColumn].getPiece();
-        if (!king.hasMoved() && !isUnderAttack(fromRow, fromColumn, king.isWhite())) {
+        if (!king.hasMoved() && !fieldIsThreatened(fromRow, fromColumn, king.isWhite())) {
             if (king.isWhite()) {
                 if (fromRow == 0 && fromColumn == 4 && toRow == 0 && toColumn == 6
                         && board[0][5].getPiece() == null
@@ -524,9 +380,9 @@ public class Chess {
                         && board[0][7].getPiece().isWhite()
                         && board[0][7].getPiece() instanceof Rook
                         && !((Rook) board[0][7].getPiece()).hasMoved()
-                        && !isUnderAttack(0, 5, true)
-                        && !isUnderAttack(0, 6, true)
-                        && !isUnderAttack(0, 7, true)) {
+                        && !fieldIsThreatened(0, 5, true)
+                        && !fieldIsThreatened(0, 6, true)
+                        && !fieldIsThreatened(0, 7, true)) {
                     return true;
                 }
                 if (fromRow == 0 && fromColumn == 4 && toRow == 0 && toColumn == 2
@@ -536,9 +392,9 @@ public class Chess {
                         && board[0][0].getPiece().isWhite()
                         && board[0][0].getPiece() instanceof Rook
                         && !((Rook) board[0][0].getPiece()).hasMoved()
-                        && !isUnderAttack(0, 0, true)
-                        && !isUnderAttack(0, 2, true)
-                        && !isUnderAttack(0, 3, true)) {
+                        && !fieldIsThreatened(0, 0, true)
+                        && !fieldIsThreatened(0, 2, true)
+                        && !fieldIsThreatened(0, 3, true)) {
                     return true;
                 }
             } else {
@@ -548,9 +404,9 @@ public class Chess {
                         && !board[7][7].getPiece().isWhite()
                         && board[7][7].getPiece() instanceof Rook
                         && !((Rook) board[7][7].getPiece()).hasMoved()
-                        && !isUnderAttack(7, 5, false)
-                        && !isUnderAttack(7, 6, false)
-                        && !isUnderAttack(7, 7, false)) {
+                        && !fieldIsThreatened(7, 5, false)
+                        && !fieldIsThreatened(7, 6, false)
+                        && !fieldIsThreatened(7, 7, false)) {
                     return true;
                 }
                 if (fromRow == 7 && fromColumn == 4 && toRow == 7 && toColumn == 2
@@ -560,13 +416,157 @@ public class Chess {
                         && !board[7][0].getPiece().isWhite()
                         && board[7][0].getPiece() instanceof Rook
                         && !((Rook) board[7][0].getPiece()).hasMoved()
-                        && !isUnderAttack(7, 0, false)
-                        && !isUnderAttack(7, 2, false)
-                        && !isUnderAttack(7, 3, false)) {
+                        && !fieldIsThreatened(7, 0, false)
+                        && !fieldIsThreatened(7, 2, false)
+                        && !fieldIsThreatened(7, 3, false)) {
                     return true;
                 }
             }
         }
         return false;
+    }
+
+    public String generateAlgebraicNotation(int fromRow, int fromColumn, int toRow, int toColumn) {
+        String notation = "";
+        Piece movingPiece = board[fromRow][fromColumn].getPiece();
+
+        if (movingPiece instanceof King && Math.abs(fromColumn - toColumn) == 2) {
+            if (toColumn == 6) {
+                notation = "O-O";
+            } else {
+                notation = "O-O-O";
+            }
+            return notation;
+        } else if (movingPiece instanceof Pawn) {
+            if (fromColumn != toColumn && board[toRow][toColumn].getPiece() == null) {
+                notation = getColumnLetter(fromColumn) + "x" + getColumnLetter(toColumn) + (toRow + 1);
+            } else {
+                notation = getColumnLetter(toColumn) + (toRow + 1);
+            }
+            if (toRow == 0 || toRow == 7) {
+                notation += "=Q";
+            }
+            return notation;
+        }
+
+        if (board[toRow][toColumn].getPiece() != null) {
+            notation += movingPiece instanceof Rook ? "R"
+                    : movingPiece instanceof Knight ? "N"
+                            : movingPiece instanceof Bishop ? "B" : movingPiece instanceof Queen ? "Q" : "K";
+            if (fromColumn == toColumn) {
+                notation += getColumnLetter(fromColumn);
+            } else {
+                notation += getColumnLetter(fromColumn) + "x";
+            }
+        } else {
+            notation += movingPiece instanceof Rook ? "R"
+                    : movingPiece instanceof Knight ? "N"
+                            : movingPiece instanceof Bishop ? "B" : movingPiece instanceof Queen ? "Q" : "K";
+            if (fromColumn == toColumn) {
+                notation += getColumnLetter(fromColumn);
+            } else {
+                notation += getColumnLetter(fromColumn) + "x";
+            }
+        }
+        notation += getColumnLetter(toColumn) + (toRow + 1);
+        return notation;
+    }
+
+    public boolean isWhiteTurn() {
+        return moves.size() % 2 == 0;
+    }
+
+    public String getLastMove() {
+        if (moves.size() == 0) {
+            return "";
+        }
+        return moves.get(moves.size() - 1);
+    }
+
+    private Field getKingField(boolean forWhite) {
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                if (board[i][j].getPiece() instanceof King && board[i][j].getPiece().isWhite() == forWhite) {
+                    return board[i][j];
+                }
+            }
+        }
+        return null;
+    }
+
+    private String getColumnLetter(int column) {
+        switch (column) {
+            case 0:
+                return "a";
+            case 1:
+                return "b";
+            case 2:
+                return "c";
+            case 3:
+                return "d";
+            case 4:
+                return "e";
+            case 5:
+                return "f";
+            case 6:
+                return "g";
+        }
+        return "h";
+    }
+
+    public void printBoard() {
+        System.out.println("  a b c d e f g h");
+        for (int i = 7; i >= 0; i--) {
+            System.out.print((i + 1) + " ");
+            for (int j = 0; j < 8; j++) {
+                if (board[i][j].getPiece() == null) {
+                    System.out.print("  ");
+                } else if (board[i][j].getPiece() instanceof Pawn) {
+                    System.out.print((board[i][j].getPiece().isWhite() ? "P" : "p") + " ");
+                } else if (board[i][j].getPiece() instanceof Rook) {
+                    System.out.print((board[i][j].getPiece().isWhite() ? "R" : "r") + " ");
+                } else if (board[i][j].getPiece() instanceof Knight) {
+                    System.out.print((board[i][j].getPiece().isWhite() ? "N" : "n") + " ");
+                } else if (board[i][j].getPiece() instanceof Bishop) {
+                    System.out.print((board[i][j].getPiece().isWhite() ? "B" : "b") + " ");
+                } else if (board[i][j].getPiece() instanceof Queen) {
+                    System.out.print((board[i][j].getPiece().isWhite() ? "Q" : "q") + " ");
+                } else if (board[i][j].getPiece() instanceof King) {
+                    System.out.print((board[i][j].getPiece().isWhite() ? "K" : "k") + " ");
+                }
+            }
+            System.out.println(i + 1);
+        }
+        System.out.println("  a b c d e f g h");
+    }
+
+    public String getBoardString() {
+        String boardString = "";
+        if (isWhiteTurn()) {
+            boardString += "w";
+        } else {
+            boardString += "b";
+        }
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                Piece piece = board[i][j].getPiece();
+                if (piece == null) {
+                    boardString += " ";
+                } else if (piece instanceof Pawn) {
+                    boardString += piece.isWhite() ? "P" : "p";
+                } else if (piece instanceof Rook) {
+                    boardString += piece.isWhite() ? "R" : "r";
+                } else if (piece instanceof Knight) {
+                    boardString += piece.isWhite() ? "N" : "n";
+                } else if (piece instanceof Bishop) {
+                    boardString += piece.isWhite() ? "B" : "b";
+                } else if (piece instanceof Queen) {
+                    boardString += piece.isWhite() ? "Q" : "q";
+                } else if (piece instanceof King) {
+                    boardString += piece.isWhite() ? "K" : "k";
+                }
+            }
+        }
+        return boardString;
     }
 }
