@@ -47,40 +47,38 @@ public class Chess {
     }
 
     public void move(int fromRow, int fromColumn, int toRow, int toColumn) {
-        if (isValidAction(fromRow, fromColumn, toRow, toColumn)) {
-            String notation = generateAlgebraicNotation(fromRow, fromColumn, toRow, toColumn);
-            Piece piece = board[fromRow][fromColumn].getPiece();
-            if (piece instanceof King && Math.abs(fromColumn - toColumn) == 2) {
-                if (piece.isWhite()) {
-                    if (toColumn == 6) {
-                        board[0][7].setPiece(null);
-                        board[0][5].setPiece(new Rook(true));
-                    } else {
-                        board[0][0].setPiece(null);
-                        board[0][3].setPiece(new Rook(true));
-                    }
+        String notation = generateAlgebraicNotation(fromRow, fromColumn, toRow, toColumn);
+        Piece piece = board[fromRow][fromColumn].getPiece();
+        if (piece instanceof King && Math.abs(fromColumn - toColumn) == 2) {
+            if (piece.isWhite()) {
+                if (toColumn == 6) {
+                    board[0][7].setPiece(null);
+                    board[0][5].setPiece(new Rook(true));
                 } else {
-                    if (toColumn == 6) {
-                        board[7][7].setPiece(null);
-                        board[7][5].setPiece(new Rook(false));
-                    } else {
-                        board[7][0].setPiece(null);
-                        board[7][3].setPiece(new Rook(false));
-                    }
+                    board[0][0].setPiece(null);
+                    board[0][3].setPiece(new Rook(true));
                 }
-            } else if (piece instanceof Pawn && fromColumn != toColumn && board[toRow][toColumn].getPiece() == null) {
-                board[toRow + (piece.isWhite() ? -1 : 1)][toColumn].setPiece(null);
+            } else {
+                if (toColumn == 6) {
+                    board[7][7].setPiece(null);
+                    board[7][5].setPiece(new Rook(false));
+                } else {
+                    board[7][0].setPiece(null);
+                    board[7][3].setPiece(new Rook(false));
+                }
             }
-            board[toRow][toColumn].setPiece(piece);
-            board[fromRow][fromColumn].setPiece(null);
-            moves.add(notation);
-            if (piece instanceof King) {
-                ((King) piece).setHasMoved(true);
-            } else if (piece instanceof Rook) {
-                ((Rook) piece).setHasMoved(true);
-            } else if (piece instanceof Pawn && (toRow == 0 || toRow == 7)) {
-                board[toRow][toColumn].setPiece(new Queen(piece.isWhite()));
-            }
+        } else if (piece instanceof Pawn && fromColumn != toColumn && board[toRow][toColumn].getPiece() == null) {
+            board[toRow + (piece.isWhite() ? -1 : 1)][toColumn].setPiece(null);
+        }
+        board[toRow][toColumn].setPiece(piece);
+        board[fromRow][fromColumn].setPiece(null);
+        moves.add(notation);
+        if (piece instanceof King) {
+            ((King) piece).setHasMoved(true);
+        } else if (piece instanceof Rook) {
+            ((Rook) piece).setHasMoved(true);
+        } else if (piece instanceof Pawn && (toRow == 0 || toRow == 7)) {
+            board[toRow][toColumn].setPiece(new Queen(piece.isWhite()));
         }
     }
 
