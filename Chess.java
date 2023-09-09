@@ -172,18 +172,22 @@ public class Chess {
         Piece targetLocationPiece = board[toRow][toColumn].getPiece();
 
         if (movingPiece.isWhite()) {
+            // double move
             if (fromRow == 1 && fromColumn == toColumn && toRow == 3 && board[2][toColumn].getPiece() == null
                     && board[3][toColumn].getPiece() == null) {
                 return true;
             }
+            // move
             if (fromRow + 1 == toRow && fromColumn == toColumn && targetLocationPiece == null) {
                 return true;
             }
+            // capture
             if (fromRow + 1 == toRow && (fromColumn == toColumn + 1 || fromColumn == toColumn - 1)
                     && ((targetLocationPiece != null && !targetLocationPiece.isWhite()))) {
                 return true;
             }
-            if (fromRow == 4 && (fromColumn == toColumn + 1 || fromColumn == toColumn - 1)
+            // en passant
+            if (fromRow == 4 && (fromColumn == toColumn + 1 || fromColumn == toColumn - 1) 
                     && (moves.size() > 0
                             && moves.get(moves.size() - 1).equals(getColumnLetter(toColumn) + 5))) {
                 return true;
