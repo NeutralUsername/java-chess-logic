@@ -187,7 +187,7 @@ public class Chess {
                 return true;
             }
             // en passant
-            if (fromRow == 4 && (fromColumn == toColumn + 1 || fromColumn == toColumn - 1) 
+            if (fromRow == 4 && (fromColumn == toColumn + 1 || fromColumn == toColumn - 1)
                     && (moves.size() > 0
                             && moves.get(moves.size() - 1).equals(getColumnLetter(toColumn) + 5))) {
                 return true;
@@ -456,25 +456,11 @@ public class Chess {
             }
             return notation;
         }
-
+        notation += movingPiece instanceof Rook ? "R"
+                : movingPiece instanceof Knight ? "N"
+                        : movingPiece instanceof Bishop ? "B" : movingPiece instanceof Queen ? "Q" : "K";
         if (board[toRow][toColumn].getPiece() != null) {
-            notation += movingPiece instanceof Rook ? "R"
-                    : movingPiece instanceof Knight ? "N"
-                            : movingPiece instanceof Bishop ? "B" : movingPiece instanceof Queen ? "Q" : "K";
-            if (fromColumn == toColumn) {
-                notation += getColumnLetter(fromColumn);
-            } else {
-                notation += getColumnLetter(fromColumn) + "x";
-            }
-        } else {
-            notation += movingPiece instanceof Rook ? "R"
-                    : movingPiece instanceof Knight ? "N"
-                            : movingPiece instanceof Bishop ? "B" : movingPiece instanceof Queen ? "Q" : "K";
-            if (fromColumn == toColumn) {
-                notation += getColumnLetter(fromColumn);
-            } else {
-                notation += getColumnLetter(fromColumn) + "x";
-            }
+            notation += "x";
         }
         notation += getColumnLetter(toColumn) + (toRow + 1);
         return notation;
