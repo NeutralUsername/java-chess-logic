@@ -566,8 +566,12 @@ public class Chess {
 
     public String getMovesString() {
         String movesString = "";
-        for (String move : moves) {
-            movesString += move + ",";
+        for (int i = 0; i < moves.size(); i++) {
+            if (i % 2 == 0) {
+                movesString += (i / 2 + 1) + ". " + moves.get(i) + " ";
+            } else {
+                movesString += moves.get(i) + "\n";
+            }
         }
         if (movesString.length() > 0) {
             movesString = movesString.substring(0, movesString.length() - 1);
