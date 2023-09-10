@@ -577,4 +577,15 @@ public class Chess {
         }
         return boardString;
     }
+
+    public String getMovesString() {
+        String movesString = "";
+        for (String move : moves) {
+            movesString += move + ",";
+        }
+        if (movesString.length() > 0) {
+            movesString = movesString.substring(0, movesString.length() - 1);
+        }
+        return movesString;
+    }
 }
