@@ -573,7 +573,7 @@ public class Chess {
                 movesString += moves.get(i) + "\n";
             }
         }
-        if (movesString.substring(movesString.length() - 1).equals("\n") || movesString.substring(movesString.length() - 1).equals(" ")) {
+        if (movesString.length() > 0 && (movesString.substring(movesString.length() - 1).equals("\n") || movesString.substring(movesString.length() - 1).equals(" "))) {
             movesString = movesString.substring(0, movesString.length() - 1);
         }
         return movesString;
