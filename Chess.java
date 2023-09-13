@@ -14,8 +14,11 @@ public class Chess {
 
     private Field[][] board;
     private ArrayList<String> moves = new ArrayList<>();
+    private long timeWhite = 0;
+    private long timeBlack = 0;
+    private long lastMoveDate = System.currentTimeMillis();
 
-    public Chess() {
+    public Chess(int timeInSeconds) {
         board = new Field[8][8];
         for (int i = 0; i < 8; i++) {
             board[1][i] = new Field(1, i, new Pawn(true));
@@ -44,6 +47,9 @@ public class Chess {
                 board[i][j] = new Field(i, j, null);
             }
         }
+
+        timeWhite = timeInSeconds * 1000;
+        timeBlack = timeInSeconds * 1000;
     }
 
     public void move(int fromRow, int fromColumn, int toRow, int toColumn) {
@@ -80,6 +86,13 @@ public class Chess {
         } else if (piece instanceof Pawn && (toRow == 0 || toRow == 7)) {
             board[toRow][toColumn].setPiece(new Queen(piece.isWhite()));
         }
+
+        if (isWhiteTurn()) {
+           timeBlack -= (System.currentTimeMillis() - lastMoveDate);
+        } else {
+            timeWhite -= (System.currentTimeMillis() - lastMoveDate);
+        }
+        lastMoveDate = System.currentTimeMillis();
     }
 
     public boolean fieldIsThreatened(int row, int column, boolean asWhite) {
@@ -120,6 +133,16 @@ public class Chess {
                 || toColumn > 7 || (fromRow == toRow && fromColumn == toColumn)) {
             return false;
         }
+        if (isWhiteTurn()) {
+            if (timeWhite - (System.currentTimeMillis() - lastMoveDate) <= 0) {
+                return false;
+            }
+        } else {
+            if (timeBlack - (System.currentTimeMillis() - lastMoveDate) <= 0) {
+                return false;
+            }
+        }
+
         Piece piece = board[fromRow][fromColumn].getPiece();
         if (piece == null) {
             return false;
@@ -541,6 +564,8 @@ public class Chess {
         } else {
             boardString += "b";
         }
+        boardString += ",";
+        boardString += timeWhite + "," + timeBlack + ",";
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 Piece piece = board[i][j].getPiece();
