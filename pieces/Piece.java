@@ -1,6 +1,6 @@
 package chess.pieces;
 
-public class Piece {
+public abstract class Piece {
     protected boolean isWhite;
 
     public Piece(boolean isWhite) {
